@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 class NewtaskCardItem extends StatefulWidget {
+  final Map<String, dynamic> productData;
   const NewtaskCardItem({
-    super.key,
+    super.key, required this.productData,
+
   });
   @override
   State<NewtaskCardItem> createState() => _NewtaskCardItemState();
@@ -25,10 +27,11 @@ class _NewtaskCardItemState extends State<NewtaskCardItem> {
             Container(
                 height: 50,
                 width: 100,
-                child: Image.asset("assets/images/skyland.jpg")),
+                child: Image.network(widget.productData['imgSrc'] ?? "")
+            ),
             const SizedBox(height: 10,),
             Text(
-              "Product Name",
+              widget.productData['productName'] ?? 'Product Name Not Found',
               style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
 
@@ -43,7 +46,9 @@ class _NewtaskCardItemState extends State<NewtaskCardItem> {
                       borderRadius: BorderRadius.circular(10),
                       color: Colors.green.shade700,
                     ),
-                    child: Text("Price:", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),)
+                    child:
+                    Text(
+                      "Price:${widget.productData['price'] ?? 'N/A'}", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),)
                 ),
                 Container(
                     padding: const EdgeInsets.all(8),
@@ -51,7 +56,7 @@ class _NewtaskCardItemState extends State<NewtaskCardItem> {
                       borderRadius: BorderRadius.circular(10),
                       color: Colors.orange
                     ),
-                    child: Text("Lowest Price!", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),)
+                    child: Text(widget.productData['siteName'] ?? 'Site Not Found', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),)
                 ),
               ],
             ),
@@ -63,14 +68,14 @@ class _NewtaskCardItemState extends State<NewtaskCardItem> {
                   text: "Availability: ",
                 ),
                 TextSpan(
-                  text: "In Stock",style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)
+                  text: widget.productData['availability'] ?? 'N/A',style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)
                 )
               ]
             )),
             SizedBox(height: 10,),
-            Text("From: TechLand", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
+            Text("From: ${widget.productData['siteName'] ?? 'Site Not Found'}", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
             SizedBox(height: 10,),
-            Text("Product URL:", style: TextStyle(fontSize: 17),)
+            Text("Product URL:${widget.productData['productUrl'] ?? 'N/A'}", style: TextStyle(fontSize: 17),)
 
           ],
         ),

@@ -14,4 +14,12 @@ class NetworkResponse {
       print('Raw JSON Response on Error: $jsonResponse');
     }
   }
+  factory NetworkResponse.fromJson(Map<String, dynamic> json) {
+    return NetworkResponse(
+      statusCode: json['statusCode'],
+      isSuccess: json['status'] == 'success',
+      jsonResponse: json['data'],
+      errorMessage: json['message'] ?? "Something went wrong!",
+    );
+  }
 }

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:price_scrapper/screen/widget/animation.dart';
 import 'package:price_scrapper/screen/widget/card.dart';
 
+import '../Rest Api/network_caller.dart';
+import '../Rest Api/network_response.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -12,6 +15,10 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  final NetworkCaller _networkCaller = NetworkCaller();
+  List<Map<String, dynamic>> searchData = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             borderSide: BorderSide.none,
                             borderRadius: BorderRadius.circular(12))),
                     validator: (String? value) {
-                      if (value?.trim().isNotEmpty ?? true) {
+                      if (value?.trim().isEmpty ?? true) {
                         return "Enter Product name";
                       }
                       return null;
@@ -75,7 +82,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   SizedBox(
                     width: MediaQuery.of(context).size.height * 0.13,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        if (_formKey.currentState?.validate() ?? false) {
+                          _searchData(_searchController.text);
+                        }
+                      },
                       child: Text(
                         "Search",
                         style: TextStyle(fontSize: 18),
@@ -87,9 +98,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   Expanded(
                     child: ListView.builder(
-                        itemCount: 5,
+                        itemCount: searchData.length,
                         itemBuilder: (context, index) {
-                          return NewtaskCardItem();
+                          return NewtaskCardItem(
+                              productData: searchData[index]
+                          );
                         }),
                   )
                 ],
@@ -100,4 +113,34 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+  void _searchData(String keyword) async {
+    String apiUrl = "https://price-scrapper-backend.onrender.com/api/v1/scrape/A4 Tech";
+    NetworkResponse response = await _networkCaller.getRequest(apiUrl);
+
+    if (response.isSuccess) {
+      setState(() {
+        var searchDataMap = response.jsonResponse['data'];
+        searchData = [
+          searchDataMap['startech'],
+          searchDataMap['techland'],
+          searchDataMap['skyland'],
+        ];
+      });
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Error"),
+          content: Text(response.errorMessage),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("OK"),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
 }
