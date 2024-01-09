@@ -24,12 +24,6 @@ class _NewtaskCardItemState extends State<NewtaskCardItem> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-                height: 50,
-                width: 100,
-                child: Image.network(widget.productData['imgSrc'] ?? "")
-            ),
-            const SizedBox(height: 10,),
             Text(
               widget.productData['productName'] ?? 'Product Name Not Found',
               style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
@@ -56,7 +50,9 @@ class _NewtaskCardItemState extends State<NewtaskCardItem> {
                       borderRadius: BorderRadius.circular(10),
                       color: Colors.orange
                     ),
-                    child: Text(widget.productData['siteName'] ?? 'Site Not Found', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),)
+                    child: Text( widget.productData['siteName'] == widget.productData['minSitename']
+                        ? "Price: ${widget.productData['minPrice'] ?? 'N/A'}"
+                        : '', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),)
                 ),
               ],
             ),

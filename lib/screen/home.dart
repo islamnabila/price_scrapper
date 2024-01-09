@@ -18,6 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final NetworkCaller _networkCaller = NetworkCaller();
   List<Map<String, dynamic>> searchData = [];
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +97,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   SizedBox(
                     height: 20,
                   ),
-                  Expanded(
+                  isLoading
+                      ? CircularProgressIndicator()
+                  : Expanded(
                     child: ListView.builder(
                         itemCount: searchData.length,
                         itemBuilder: (context, index) {
@@ -114,9 +117,16 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
   void _searchData(String keyword) async {
-    String apiUrl = "https://price-scrapper-backend.onrender.com/api/v1/scrape/A4 Tech";
+    setState(() {
+      isLoading = true;
+    });
+    String apiUrl = "https://price-scrapper-backend.onrender.com/api/v1/scrape/$keyword";
     NetworkResponse response = await _networkCaller.getRequest(apiUrl);
+    print("API Response: ${response.jsonResponse}");
 
+    setState(() {
+      isLoading = false;
+    });
     if (response.isSuccess) {
       setState(() {
         var searchDataMap = response.jsonResponse['data'];
@@ -126,6 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
           searchDataMap['skyland'],
         ];
       });
+      _searchController.clear();
     } else {
       showDialog(
         context: context,
