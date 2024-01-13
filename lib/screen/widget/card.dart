@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class NewtaskCardItem extends StatefulWidget {
   final Map<String, dynamic> productData;
@@ -16,7 +17,7 @@ class _NewtaskCardItemState extends State<NewtaskCardItem> {
   Widget build(BuildContext context) {
     return Card(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15)
+        borderRadius: BorderRadius.circular(10)
       ),
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: Padding(
@@ -44,15 +45,14 @@ class _NewtaskCardItemState extends State<NewtaskCardItem> {
                     Text(
                       "Price:${widget.productData['price'] ?? 'N/A'}", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),)
                 ),
+
                 Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: Colors.orange
+                      color: Colors.red
                     ),
-                    child: Text( widget.productData['siteName'] == widget.productData['minSitename']
-                        ? "Price: ${widget.productData['minPrice'] ?? 'N/A'}"
-                        : '', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),)
+                    child: Text(widget.productData['minSitename'] ?? 'Not Found', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),)
                 ),
               ],
             ),
@@ -71,11 +71,33 @@ class _NewtaskCardItemState extends State<NewtaskCardItem> {
             SizedBox(height: 10,),
             Text("From: ${widget.productData['siteName'] ?? 'Site Not Found'}", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
             SizedBox(height: 10,),
-            Text("Product URL:${widget.productData['productUrl'] ?? 'N/A'}", style: TextStyle(fontSize: 17),)
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Product URL: ", style: TextStyle(fontSize: 17),),
+                GestureDetector(
+                    onTap: () {
+                      _launchURL(widget.productData['productUrl']);
+                    },
+                    child: Text(
+                      "${widget.productData['productUrl'] ?? 'N/A'}",
+                      style: TextStyle(fontSize: 17,
+                      color: Colors.blue, decoration: TextDecoration.underline),))
+              ],
+            )
 
           ],
         ),
       ),
     );
+  }
+}
+
+Future<void> _launchURL(String url) async {
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    throw 'Could not launch $url';
   }
 }

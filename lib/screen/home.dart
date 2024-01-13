@@ -23,7 +23,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue.shade50,
       body: SafeArea(
         child: Center(
           child: Padding(
@@ -37,17 +36,22 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
-                    height: 15,
+                    height: 24,
                   ),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      AnimatedImage(imagePath: 'assets/images/startech.png'),
-                      AnimatedImage(imagePath: 'assets/images/techland.png'),
-                      AnimatedImage(imagePath: 'assets/images/skyland.jpg'),
+                      ImageWidget(image:"https://www.startech.com.bd/image/catalog/logo.png"),
+                      ImageWidget(image:"https://www.techlandbd.com/image/cache/wp/gp/techland/logo/techland-white-logo-300x48.webp"),
+                      ImageWidget(image: "https://www.skyland.com.bd/image/cache/catalog/skyland-logo-200x42.png.webp"),
+
+                      // AnimatedImage(imagePath: 'assets/images/startech.png'),
+                      // AnimatedImage(imagePath: 'assets/images/techland.png'),
+                      // AnimatedImage(imagePath: 'assets/images/skyland.jpg'),
                     ],
                   ),
                   SizedBox(
-                    height: 15,
+                    height: 24,
                   ),
                   TextFormField(
                     controller: _searchController,
@@ -63,13 +67,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         border: InputBorder.none,
                         focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(12)),
+                            borderRadius: BorderRadius.circular(10)),
                         enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(12)),
+                            borderRadius: BorderRadius.circular(10)),
                         disabledBorder: OutlineInputBorder(
                             borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(12))),
+                            borderRadius: BorderRadius.circular(10))),
                     validator: (String? value) {
                       if (value?.trim().isEmpty ?? true) {
                         return "Enter Product name";
@@ -130,11 +134,10 @@ class _HomeScreenState extends State<HomeScreen> {
     if (response.isSuccess) {
       setState(() {
         var searchDataMap = response.jsonResponse['data'];
-        searchData = [
-          searchDataMap['startech'],
-          searchDataMap['techland'],
-          searchDataMap['skyland'],
-        ];
+        searchData = [];
+        searchDataMap.forEach((key, value) {
+          searchData.add(value);
+        });
       });
       _searchController.clear();
     } else {
@@ -155,3 +158,27 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
 }
+
+class ImageWidget extends StatelessWidget {
+  const ImageWidget({
+    super.key, required this.image,
+  });
+  final String image;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        padding: EdgeInsets.only(left: 2, right: 2),
+        height: 50,
+          width: 80,
+          decoration: BoxDecoration(
+            color:Color.fromRGBO(52,58,64, 1),
+            borderRadius: BorderRadius.circular(5)
+          ),
+          child: Image.network(image)),
+    );
+  }
+}
+

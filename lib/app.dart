@@ -13,8 +13,8 @@ class PriceScrapper extends StatelessWidget {
       theme: ThemeData(
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            backgroundColor: Colors.blue,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+            backgroundColor: Color.fromRGBO(10, 89, 203,1),
             padding: const EdgeInsets.symmetric(vertical: 14),
             textStyle: const TextStyle(
               fontSize: 14,
