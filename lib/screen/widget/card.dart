@@ -46,14 +46,30 @@ class _NewtaskCardItemState extends State<NewtaskCardItem> {
                       "Price:${widget.productData['price'] ?? 'N/A'}", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),)
                 ),
 
-                Container(
+                // Container(
+                //     padding: const EdgeInsets.all(8),
+                //     decoration: BoxDecoration(
+                //       borderRadius: BorderRadius.circular(10),
+                //       color: Colors.red
+                //     ),
+                //     child: Text(widget.productData['minSitename'] == widget.productData['siteName']
+                //         ? 'Lowest Price'
+                //         : "Not found", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),)
+                // ),
+
+                if (widget.productData['siteName'] == widget.productData['minSitename'])
+                  Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: Colors.red
+                      color: Colors.red,
                     ),
-                    child: Text(widget.productData['minSitename'] ?? 'Not Found', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),)
-                ),
+                    child: Text(
+                      'Lowest Price: ${widget.productData['lowestPrice'] ?? 'N/A'}',
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                  )else
+                    Container(),
               ],
             ),
             SizedBox(height: 10,),

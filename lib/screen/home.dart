@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:price_scrapper/screen/widget/animation.dart';
 import 'package:price_scrapper/screen/widget/card.dart';
+import 'package:price_scrapper/utility/url.dart';
 
 import '../Rest Api/network_caller.dart';
 import '../Rest Api/network_response.dart';
+
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -16,9 +18,9 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  final NetworkCaller _networkCaller = NetworkCaller();
   List<Map<String, dynamic>> searchData = [];
   bool isLoading = false;
+
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +110,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         itemCount: searchData.length,
                         itemBuilder: (context, index) {
                           return NewtaskCardItem(
-                              productData: searchData[index]
+                              productData: searchData[index],
+
                           );
                         }),
                   )
@@ -120,17 +123,52 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
+
+  // void _searchData(String keyword) async {
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+  //
+  //   NetworkResponse response = await NetworkCaller().getRequest(Urls.baseurl + keyword);
+  //   print("API Response: ${response.jsonResponse}");
+  //
+  //   setState(() {
+  //     isLoading = false;
+  //   });
+  //   if (response.isSuccess) {
+  //     setState(() {
+  //       var searchDataMap = response.jsonResponse['data'];
+  //       searchData = [];
+  //       searchDataMap.forEach((key, value) {
+  //         searchData.add(value);
+  //       });
+  //     });
+  //     _searchController.clear();
+  //   } else {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text(response.errorMessage),
+  //         duration: Duration(seconds: 3), // Adjust the duration as needed
+  //       ),
+  //
+  //     );
+  //   }
+  // }
+
   void _searchData(String keyword) async {
     setState(() {
       isLoading = true;
     });
-    String apiUrl = "https://price-scrapper-backend.onrender.com/api/v1/scrape/$keyword";
-    NetworkResponse response = await _networkCaller.getRequest(apiUrl);
+
+    // Fetch data from scrape API
+    NetworkResponse response = await NetworkCaller().getRequest(Urls.baseurl + keyword);
     print("API Response: ${response.jsonResponse}");
 
     setState(() {
       isLoading = false;
     });
+
     if (response.isSuccess) {
       setState(() {
         var searchDataMap = response.jsonResponse['data'];
@@ -139,17 +177,73 @@ class _HomeScreenState extends State<HomeScreen> {
           searchData.add(value);
         });
       });
+
+      // Now, fetch data from lowest price API
+      await _fetchLowestPriceData(keyword);
       _searchController.clear();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(response.errorMessage),
-          duration: Duration(seconds: 3), // Adjust the duration as needed
+          duration: Duration(seconds: 3),
         ),
-
       );
     }
   }
+  //
+  // Future<void> _fetchLowestPriceData(String keyword) async {
+  //   NetworkResponse lowestPriceResponse = await NetworkCaller().getRequest(Urls.lowestPrice + keyword);
+  //   print("API Response (Lowest Price): ${lowestPriceResponse.jsonResponse}");
+  //
+  //   if (lowestPriceResponse.isSuccess) {
+  //     setState(() {
+  //       searchData.forEach((productData) {
+  //         productData['lowestPrice'] = lowestPriceResponse.jsonResponse['data']['minPrice'];
+  //       });
+  //     });
+  //   } else {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text(lowestPriceResponse.errorMessage ?? 'Error fetching lowest price'),
+  //         duration: Duration(seconds: 3),
+  //       ),
+  //     );
+  //   }
+  // }
+
+  Future<void> _fetchLowestPriceData(String keyword) async {
+    NetworkResponse lowestPriceResponse = await NetworkCaller().getRequest(Urls.lowestPrice + keyword);
+    print("API Response (Lowest Price): ${lowestPriceResponse.jsonResponse}");
+
+    if (lowestPriceResponse.isSuccess) {
+      // Check if the response contains the expected property
+      if (lowestPriceResponse.jsonResponse.containsKey('data')) {
+        setState(() {
+          var minPrice = lowestPriceResponse.jsonResponse['data']['minPrice'];
+          searchData.forEach((productData) {
+            productData['lowestPrice'] = minPrice;
+          });
+        });
+      } else {
+        print("'data' key not found in the response");
+        // Handle the case where 'data' key is not present in the response
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(lowestPriceResponse.errorMessage ?? 'Error fetching lowest price'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
+  }
+
+
+
+
+
+
+
 
 }
 
