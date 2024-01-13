@@ -141,18 +141,12 @@ class _HomeScreenState extends State<HomeScreen> {
       });
       _searchController.clear();
     } else {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text("Error"),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
           content: Text(response.errorMessage),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text("OK"),
-            ),
-          ],
+          duration: Duration(seconds: 3), // Adjust the duration as needed
         ),
+
       );
     }
   }

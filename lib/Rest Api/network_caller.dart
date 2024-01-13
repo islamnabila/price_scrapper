@@ -17,11 +17,6 @@ class NetworkCaller{
             isSuccess: true,
             jsonResponse: jsonDecode(response.body),
             statusCode: 200);
-      }else if(response.statusCode ==401){
-        return NetworkResponse(
-            isSuccess: false, 
-            jsonResponse: jsonDecode(response.body),
-            statusCode: response.statusCode);
       }
       else{
         return NetworkResponse(
